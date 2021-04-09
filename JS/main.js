@@ -1,3 +1,38 @@
+/*
+First part:
+The analog clock animation
+*/
+//query selectors
+const analogClockDiv = document.querySelector("#analogClock");
+const secondsHandler = document.querySelector("#secondsHandler");
+const minutesHandler = document.querySelector("#minutesHandler");
+const hoursHandler = document.querySelector("#hoursHandler");
+
+const rotateHandlers = () => {
+  const date = new Date();
+  const seconds = date.getSeconds();
+  const angleSeconds = 6 * seconds;
+
+  const minutes = date.getMinutes() + seconds / 60;
+  const angleMinutes = 6 * minutes;
+
+  const hours = (date.getHours() % 12) + minutes / 60;
+  const angleHours = 5 * hours * 6;
+
+  secondsHandler.style.transform = `rotate(${angleSeconds}deg)`;
+  minutesHandler.style.transform = `rotate(${angleMinutes}deg)`;
+  hoursHandler.style.transform = `rotate(${angleHours}deg)`;
+
+  //recrusive
+  setTimeout(() => {
+    rotateHandlers();
+  }, 1000);
+};
+
+/*/
+Second part:
+The time in lebanese
+*/
 const AND_CONJUNCTION = "و";
 const PAST_CONJUNCTION = "إلا";
 const MINUTE_SUFFIX_SINGULAR = "دقيقة";
@@ -155,7 +190,32 @@ const updateTimeOnPagePeriodically = () => {
   }, 1000 * secsUntilNextMinute);
 };
 
+/*
+Main calls when window is loaded
+*/
 window.onload = () => {
   updateTimeOnPage();
   updateTimeOnPagePeriodically();
+
+  rotateHandlers();
 };
+
+/*
+PWA: check and register service worker
+*/
+// if ("serviceWorker" in navigator) {
+//   window.addEventListener("load", () => {
+//     navigator.serviceWorker.register("../sw.js").then(() => {
+//       console.log("Service Worker Registered");
+//     });
+//   });
+// }
+
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker
+      .register("../service-worker.js")
+      .then(() => console.log("service worker registered"))
+      .catch((err) => console.log("service worker not registered", err));
+  });
+}
