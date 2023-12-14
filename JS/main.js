@@ -94,17 +94,19 @@ const NUMBERS_TO_LEBANESE = {
   35: { forMinutes: "نص و خمسة", skipMinutesSuffix: true },
 };
 
-hoursAndMinutesToLebanese = (hours = 3, minutes = 10) => {
+hoursAndMinutesToLebanese = (hours = 3, rawMinutes = 10) => {
   /*process the hours:
   1- 12h format (in some case (where the format is like five to something, you convert the i+1 hour))
   2- get the corresponding expression from the dict
   */
 
+  const minutes = Math.round(rawMinutes / 5) * 5;
+
   const hoursTwelveFormat = (minutes <= 39 ? hours : hours + 1) % 12 || 12;
 
   const hoursInLebanese = NUMBERS_TO_LEBANESE[hoursTwelveFormat].forHours;
 
-  /*prcess the minutes:
+  /*process the minutes:
     1- if the minutes number is >= 40, take the difference from 60 (will be using the past conjunction)
     2- check if the number exists in the dictionary (<20 or a special case)
     3- if not, get the units and tens and convert it accordignly
